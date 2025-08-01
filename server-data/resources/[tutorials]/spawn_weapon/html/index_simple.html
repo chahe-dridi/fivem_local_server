@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weapon Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            color: white;
+            overflow: hidden;
+        }
+
+        .menu-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            max-width: 1000px;
+            height: 80vh;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #333;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .menu-container.show {
+            display: flex;
+        }
+
+        .header {
+            background: #333;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: #ff4444;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .close-btn:hover {
+            background: #ff6666;
+        }
+
+        .tabs {
+            display: flex;
+            background: #222;
+            padding: 10px;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #444;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: #666;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .weapon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .weapon-card {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .weapon-card:hover {
+            background: #444;
+            border-color: #777;
+            transform: translateY(-2px);
+        }
+
+        .weapon-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        .spawn-btn {
+            background: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .spawn-btn:hover {
+            background: #45a049;
+        }
+
+        .ammo-control {
+            background: #222;
+            padding: 15px;
+            border-radius: 0 0 8px 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .ammo-slider {
+            flex: 1;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="weaponMenu" class="menu-container">
+        <div class="header">
+            <h2>🔫 Weapon Menu</h2>
+            <button id="closeBtn" class="close-btn">✕</button>
+        </div>
+
+        <div class="tabs" id="tabs">
+            <button class="tab-btn active" data-category="all">All</button>
+            <button class="tab-btn" data-category="pistols">Pistols</button>
+            <button class="tab-btn" data-category="smgs">SMGs</button>
+            <button class="tab-btn" data-category="rifles">Rifles</button>
+            <button class="tab-btn" data-category="shotguns">Shotguns</button>
+            <button class="tab-btn" data-category="snipers">Snipers</button>
+            <button class="tab-btn" data-category="heavy">Heavy</button>
+            <button class="tab-btn" data-category="melee">Melee</button>
+            <button class="tab-btn" data-category="throwables">Throwables</button>
+        </div>
+
+        <div class="content">
+            <div id="weaponGrid" class="weapon-grid">
+                <!-- Weapons will be loaded here -->
+            </div>
+        </div>
+
+        <div class="ammo-control">
+            <label>Ammo:</label>
+            <input type="range" id="ammoSlider" class="ammo-slider" min="50" max="9999" value="250" step="50">
+            <span id="ammoValue">250</span>
+        </div>
+    </div>
+
+    <script>
+        let weaponData = {};
+        let currentCategory = 'all';
+        let currentAmmo = 250;
+
+        // DOM elements
+        const menuContainer = document.getElementById('weaponMenu');
+        const closeBtn = document.getElementById('closeBtn');
+        const tabs = document.querySelectorAll('.tab-btn');
+        const weaponGrid = document.getElementById('weaponGrid');
+        const ammoSlider = document.getElementById('ammoSlider');
+        const ammoValue = document.getElementById('ammoValue');
+
+        // Event listeners
+        closeBtn.addEventListener('click', closeMenu);
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                currentCategory = tab.dataset.category;
+                updateActiveTab();
+                renderWeapons();
+            });
+        });
+
+        ammoSlider.addEventListener('input', () => {
+            currentAmmo = parseInt(ammoSlider.value);
+            ammoValue.textContent = currentAmmo;
+        });
+
+        // Functions
+        function formatWeaponName(weaponName) {
+            return weaponName
+                .replace('WEAPON_', '')
+                .toLowerCase()
+                .replace(/_/g, ' ');
+        }
+
+        function getAllWeapons() {
+            const all = [];
+            Object.values(weaponData).forEach(category => {
+                all.push(...category);
+            });
+            return all;
+        }
+
+        function getWeaponsForCategory(category) {
+            if (category === 'all') {
+                return getAllWeapons();
+            }
+            return weaponData[category] || [];
+        }
+
+        function updateActiveTab() {
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === currentCategory);
+            });
+        }
+
+        function renderWeapons() {
+            const weapons = getWeaponsForCategory(currentCategory);
+            weaponGrid.innerHTML = '';
+
+            weapons.forEach(weapon => {
+                const card = document.createElement('div');
+                card.className = 'weapon-card';
+                
+                const formattedName = formatWeaponName(weapon);
+                
+                card.innerHTML = `
+                    <div class="weapon-name">${formattedName}</div>
+                    <button class="spawn-btn" onclick="spawnWeapon('${weapon}')">Spawn</button>
+                `;
+                
+                weaponGrid.appendChild(card);
+            });
+        }
+
+        function spawnWeapon(weaponName) {
+            fetch(`https://spawn_weapon/spawnWeapon`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    weapon: weaponName,
+                    ammo: currentAmmo
+                })
+            }).catch(() => {});
+        }
+
+        function closeMenu() {
+            fetch(`https://spawn_weapon/closeMenu`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            }).catch(() => {});
+        }
+
+        // Message listener
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            
+            if (data.type === 'openMenu') {
+                weaponData = data.weaponData;
+                menuContainer.classList.add('show');
+                renderWeapons();
+            } else if (data.type === 'closeMenu') {
+                menuContainer.classList.remove('show');
+            }
+        });
+
+        // ESC key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+    </script>
+</body>
+</html>

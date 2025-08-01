@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Car Spawn Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="car-menu" id="carMenu">
+        <div class="menu-header">
+            <h1><span class="icon">🚗</span> Enhanced Car Spawn Menu</h1>
+            <button class="close-btn" onclick="closeMenu()">×</button>
+        </div>
+        <div class="menu-body">
+            <div class="main-content">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search vehicles..." onkeyup="searchVehicles()">
+                </div>
+                
+                <div class="category-nav">
+                    <div class="category-tabs">
+                        <button class="tab-btn active" onclick="showCategory('sports')">
+                            <span class="tab-icon">🏎️</span>
+                            <span class="tab-text">Sports</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('super')">
+                            <span class="tab-icon">🚀</span>
+                            <span class="tab-text">Super</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('muscle')">
+                            <span class="tab-icon">💪</span>
+                            <span class="tab-text">Muscle</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('suvs')">
+                            <span class="tab-icon">🚙</span>
+                            <span class="tab-text">SUVs</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('motorcycles')">
+                            <span class="tab-icon">🏍️</span>
+                            <span class="tab-text">Bikes</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('planes')">
+                            <span class="tab-icon">✈️</span>
+                            <span class="tab-text">Planes</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('helicopters')">
+                            <span class="tab-icon">🚁</span>
+                            <span class="tab-text">Helis</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('boats')">
+                            <span class="tab-icon">🚤</span>
+                            <span class="tab-text">Boats</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('emergency')">
+                            <span class="tab-icon">🚨</span>
+                            <span class="tab-text">Emergency</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('military')">
+                            <span class="tab-icon">🎖️</span>
+                            <span class="tab-text">Military</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('trucks')">
+                            <span class="tab-icon">🚛</span>
+                            <span class="tab-text">Trucks</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('vans')">
+                            <span class="tab-icon">🚐</span>
+                            <span class="tab-text">Vans</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('classic')">
+                            <span class="tab-icon">🏛️</span>
+                            <span class="tab-text">Classic</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('offroad')">
+                            <span class="tab-icon">🏔️</span>
+                            <span class="tab-text">Off-Road</span>
+                        </button>
+                        <button class="tab-btn" onclick="showCategory('utility')">
+                            <span class="tab-icon">🔧</span>
+                            <span class="tab-text">Utility</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="vehicles-section">
+                    <div class="vehicles-grid" id="vehiclesGrid">
+                        <!-- Vehicles will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="customization-panel">
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <span class="title-icon">🎯</span>
+                            Spawn Target
+                        </div>
+                        <div class="options-grid">
+                            <button class="option-btn active" onclick="selectTarget('self')">
+                                <span class="option-icon">👤</span>
+                                <span>For Me</span>
+                            </button>
+                            <button class="option-btn" onclick="selectTarget('nearest')">
+                                <span class="option-icon">🎯</span>
+                                <span>Nearest Player</span>
+                            </button>
+                            <button class="option-btn" onclick="selectTarget('custom')">
+                                <span class="option-icon">🔢</span>
+                                <span>Player ID</span>
+                            </button>
+                        </div>
+                        <div class="player-id-input" id="playerIdInput">
+                            <input type="number" id="targetPlayerId" placeholder="Enter Player ID" min="1" max="255">
+                        </div>
+                    </div>
+                    
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <span class="title-icon">🎨</span>
+                            Customization Style
+                        </div>
+                        <div class="options-grid">
+                            <button class="option-btn active" onclick="selectStyle('default')">
+                                <span class="option-icon">📦</span>
+                                <span>Default</span>
+                            </button>
+                            <button class="option-btn" onclick="selectStyle('tuned')">
+                                <span class="option-icon">🔧</span>
+                                <span>Fully Tuned</span>
+                            </button>
+                            <button class="option-btn" onclick="selectStyle('clean')">
+                                <span class="option-icon">✨</span>
+                                <span>Clean</span>
+                            </button>
+                            <button class="option-btn" onclick="selectStyle('dirty')">
+                                <span class="option-icon">🏜️</span>
+                                <span>Dirty</span>
+                            </button>
+                            <button class="option-btn" onclick="selectStyle('race')">
+                                <span class="option-icon">🏁</span>
+                                <span>Race</span>
+                            </button>
+                            <button class="option-btn" onclick="selectStyle('luxury')">
+                                <span class="option-icon">💎</span>
+                                <span>Luxury</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-section spawn-section">
+                        <button class="spawn-btn" onclick="spawnSelectedCar()" id="spawnBtn">
+                            🚗 Select a vehicle to spawn
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vehicle-info-panel">
+                <div class="panel-header">
+                    <div class="panel-title">🚗 Current Vehicle</div>
+                    <div class="panel-subtitle">Real-time vehicle information</div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="section-header">
+                        <span class="header-icon">📊</span>
+                        Vehicle Status
+                    </div>
+                    <div class="info-grid" id="vehicleStatus">
+                        <div class="info-item">
+                            <span class="label">Vehicle:</span>
+                            <span class="value" id="vehicleName">No Vehicle</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Speed:</span>
+                            <span class="value" id="vehicleSpeed">0 MPH</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Seat:</span>
+                            <span class="value" id="vehicleSeat">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Engine:</span>
+                            <span class="value" id="engineStatus">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Health:</span>
+                            <span class="value" id="vehicleHealth">-</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="healthBar"></div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Engine:</span>
+                            <span class="value" id="engineHealth">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Body:</span>
+                            <span class="value" id="bodyHealth">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section controls-section">
+                    <div class="section-header">
+                        <span class="header-icon">🎮</span>
+                        Vehicle Controls
+                    </div>
+                    <div class="control-grid">
+                        <button class="control-btn" onclick="vehicleAction('fix')">
+                            <span class="btn-icon">🔧</span>
+                            Repair
+                        </button>
+                        <button class="control-btn" onclick="vehicleAction('clean')">
+                            <span class="btn-icon">🧽</span>
+                            Clean
+                        </button>
+                        <button class="control-btn" onclick="vehicleAction('engine')">
+                            <span class="btn-icon">🔑</span>
+                            Engine
+                        </button>
+                        <button class="control-btn" onclick="vehicleAction('lock')">
+                            <span class="btn-icon">🔒</span>
+                            Lock
+                        </button>
+                        <button class="control-btn" onclick="vehicleAction('changeSeat', -1)">
+                            <span class="btn-icon">🚗</span>
+                            Driver
+                        </button>
+                        <button class="control-btn" onclick="vehicleAction('changeSeat', 0)">
+                            <span class="btn-icon">👤</span>
+                            Pass.
+                        </button>
+                        <button class="control-btn danger" onclick="vehicleAction('delete')">
+                            <span class="btn-icon">🗑️</span>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
